@@ -75,7 +75,7 @@ begin
   from private.app_config
   where key = 'backend_secret_hash';
 
-  if coalesce(extensions.encode(extensions.digest(p_secret, 'sha256'), 'hex'), '')
+  if coalesce(pg_catalog.encode(extensions.digest(p_secret, 'sha256'), 'hex'), '')
      <> coalesce(expected_hash, '') then
     raise exception 'Invalid backend credentials' using errcode = '42501';
   end if;
