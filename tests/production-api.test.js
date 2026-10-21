@@ -15,16 +15,20 @@ function request(path, options = {}) {
   });
 }
 
-test('lists events and normalizes database time values', async () => {
-  global.fetch = async () => Response.json([{
-    id: 1,
-    name: 'Career Workshop',
-    description: 'Prepare for work.',
-    date: '2026-11-12',
-    time: '10:00:00',
-    venue: 'Library',
-    registration_count: 2,
-  }]);
+test('lists events with publishable-key authentication and normalizes time values', async () => {
+  global.fetch = async (_url, options) => {
+    assert.equal(options.headers.apikey, 'test-publishable-key');
+    assert.equal('Authorization' in options.headers, false);
+    return Response.json([{
+      id: 1,
+      name: 'Career Workshop',
+      description: 'Prepare for work.',
+      date: '2026-11-12',
+      time: '10:00:00',
+      venue: 'Library',
+      registration_count: 2,
+    }]);
+  };
 
   const response = await api.fetch(request('events'));
   const events = await response.json();
